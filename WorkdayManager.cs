@@ -22,15 +22,15 @@ public class WorkdayManager : IWorkdayManager {
         return m_workdayEnd;
     }
 
-    public void AddHoliday(DateOnly holiday)
+    public void AddHoliday(DateOnly _holiday)
     {
         // warning about year 1
-        m_additionalHolidays.Add(holiday);
+        m_additionalHolidays.Add(_holiday);
     }
 
-    public int SecondsSinceStart(TimeOnly time)
+    public int SecondsSinceStart(TimeOnly _time)
     {
-        return (time.Hour - m_workdayStart.Hour) * 3600 + (time.Minute - m_workdayStart.Minute) * 60;
+        return (_time.Hour - m_workdayStart.Hour) * 3600 + (_time.Minute - m_workdayStart.Minute) * 60;
     }
 
     public int WorkdayLengthInSeconds()
@@ -38,15 +38,15 @@ public class WorkdayManager : IWorkdayManager {
         return SecondsSinceStart(m_workdayEnd);
     }
 
-    public bool IsHoliday(DateTime date)
+    public bool IsHoliday(DateTime _date)
     {
-        return IsHoliday((DateOnly.FromDateTime(date)));
+        return IsHoliday((DateOnly.FromDateTime(_date)));
     }
 
-    public bool IsHoliday(DateOnly date)
+    public bool IsHoliday(DateOnly _date)
     {
         // weekends are not working days
-        if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
+        if (_date.DayOfWeek == DayOfWeek.Saturday || _date.DayOfWeek == DayOfWeek.Sunday)
         {
             return true;
         }
@@ -56,9 +56,9 @@ public class WorkdayManager : IWorkdayManager {
         {
             // return true if a recurring holiday, or one of the same year shares the current day and month
             if (
-                    (holiday.Year == 1 || holiday.Year == date.Year)
-                    && holiday.Month == date.Month
-                    && holiday.Day == date.Day
+                    (holiday.Year == 1 || holiday.Year == _date.Year)
+                    && holiday.Month == _date.Month
+                    && holiday.Day == _date.Day
                )
             {
                 return true;
