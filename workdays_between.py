@@ -2,10 +2,20 @@ from datetime import datetime, time, timedelta
 
 
 class WorkdayManager:
-    workday_start: time = time(hour=8)
-    workday_end: time = time(hour=16)
+    workday_start = None
+    workday_end = None
+    additional_holidays = None
 
-    additional_holidays = []
+    def __init__(self, workday_start, workday_end):
+        self.additional_holidays  = []
+        self.set_workday_start(workday_start)
+        self.set_workday_end(workday_end)
+
+    def set_workday_start(self, workday_start):
+        self.workday_start = workday_start
+
+    def set_workday_end(self, workday_end):
+        self.workday_end = workday_end
 
     def add_holiday(self, year, month, day):
         assert year != 0, "year 0 can not be represented in python DateTime"
@@ -78,7 +88,7 @@ def add_working_days(start_date: datetime, working_days: float, workday_manager)
 
 
 if __name__ == "__main__":
-    workday_manager: WorkdayManager = WorkdayManager()
+    workday_manager: WorkdayManager = WorkdayManager(workday_start=time(hour=8), workday_end=time(hour=16))
     workday_manager.add_holiday(year=-1, month=5, day=17)
     workday_manager.add_holiday(year=2004, month=5, day=27)
 
