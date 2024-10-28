@@ -88,6 +88,8 @@ def add_working_days(start_date: datetime, working_days: float, workday_manager)
 
 
 if __name__ == "__main__":
+    print("Start of Python unit tests for adding work days")
+
     workday_manager: WorkdayManager = WorkdayManager(workday_start=time(hour=8), workday_end=time(hour=16))
     workday_manager.add_holiday(year=-1, month=5, day=17)
     workday_manager.add_holiday(year=2004, month=5, day=27)
@@ -191,3 +193,4 @@ if __name__ == "__main__":
         working_days=8.276628,
         workday_manager=workday_manager
     ) == datetime(year=2004, month=6, day=4, hour=10, minute=12)
+    print("End of Python unit tests for adding work days")
