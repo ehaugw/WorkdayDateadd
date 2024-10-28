@@ -45,13 +45,16 @@ public class WorkdayManager : IWorkdayManager {
 
     public bool IsHoliday(DateOnly date)
     {
+        // weekends are not working days
         if (date.DayOfWeek == DayOfWeek.Saturday || date.DayOfWeek == DayOfWeek.Sunday)
         {
             return true;
         }
 
+        // iterate all additional holidays
         foreach (var holiday in m_additionalHolidays)
         {
+            // return true if a recurring holiday, or one of the same year shares the current day and month
             if (
                     (holiday.Year == 1 || holiday.Year == date.Year)
                     && holiday.Month == date.Month
@@ -62,6 +65,7 @@ public class WorkdayManager : IWorkdayManager {
             }
         }
 
+        // if no holiday cule has been hit, return false because this is a regular day
         return false;
     }
 }

@@ -2,6 +2,7 @@ namespace DateTimeWorkdayExtensions
 {
     public static class DateTimeWorkdayExtension
     {
+        // extension method to be used only locally to replace DateTime Time with TimeOnly
         private static DateTime SetTimeOnly(this DateTime _date, TimeOnly _time)
         {
             return new DateTime(_date.Year, _date.Month, _date.Day, _time.Hour, _time.Minute, _time.Second);
@@ -33,6 +34,8 @@ namespace DateTimeWorkdayExtensions
                 / ((float)_workdayManager.WorkdayLengthInSeconds());
             resultDate = resultDate.SetTimeOnly(_workdayManager.GetWorkdayStart());
 
+            // while there are days to add, add them, and only subtract them from daysToAdd if the new date is not a
+            // holiday
             while (daysToAdd >= 1)
             {
                 resultDate = resultDate.AddDays(1);
@@ -42,6 +45,8 @@ namespace DateTimeWorkdayExtensions
                 }
             }
 
+            // while there are days to add backwards, add them, and only subtract them from daysToAdd if the new date
+            // is not a holiday
             while (daysToAdd < 0)
             {
                 resultDate = resultDate.AddDays(-1);
@@ -51,6 +56,8 @@ namespace DateTimeWorkdayExtensions
                 }
             }
 
+            // add the last fraction of a workday as a working day duration * that fraction to the date, which starts
+            // at working day start
             if (daysToAdd > 0)
             {
                 resultDate = resultDate.AddSeconds(_workdayManager.WorkdayLengthInSeconds() * daysToAdd);
