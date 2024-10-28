@@ -144,6 +144,13 @@ if __name__ == "__main__":
 
 
     # SPEC TEST CASES
+    # test zeroth base case from task
+    assert add_working_days(
+        start_date=datetime(year=2004, month=5, day=24, hour=18, minute=5),
+        working_days=-5.5,
+        workday_manager=workday_manager
+    ) == datetime(year=2004, month=5, day=14, hour=12, minute=0)
+
     # test first base case from task
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=19, minute=3),
