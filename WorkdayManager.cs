@@ -1,9 +1,8 @@
 using System;
 
-public class WorkdayManager {
-    public TimeOnly m_workdayStart { get; private set; }
-    public TimeOnly m_workdayEnd { get; private set; }
-
+public class WorkdayManager : IWorkdayManager {
+    private TimeOnly m_workdayStart;
+    private TimeOnly m_workdayEnd;
     private List<DateOnly> m_additionalHolidays;
 
     public WorkdayManager(TimeOnly _workdayStart, TimeOnly _workdayEnd)
@@ -11,6 +10,16 @@ public class WorkdayManager {
         m_additionalHolidays = new List<DateOnly>{};
         m_workdayStart = _workdayStart;
         m_workdayEnd = _workdayEnd;
+    }
+
+    public TimeOnly GetWorkdayStart()
+    {
+        return m_workdayStart;
+    }
+
+    public TimeOnly GetWorkdayEnd()
+    {
+        return m_workdayEnd;
     }
 
     public void AddHoliday(DateOnly holiday)

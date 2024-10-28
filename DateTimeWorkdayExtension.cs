@@ -7,7 +7,7 @@ namespace DateTimeWorkdayExtensions
             return new DateTime(_date.Year, _date.Month, _date.Day, _time.Hour, _time.Minute, _time.Second);
         }
 
-        public static void AddWorkingDays(this DateTime _date, WorkdayManager _workdayManager, float _workingDays)
+        public static void AddWorkingDays(this DateTime _date, IWorkdayManager _workdayManager, float _workingDays)
         {
             // assert start_date.microsecond == 0, "task does not require microsecond accuracy"
             // assert working_days != 0, "unspecified behaviour"
@@ -15,15 +15,15 @@ namespace DateTimeWorkdayExtensions
 
             // disregard time before workday start
             DateTime resultDate = _date;
-            if (TimeOnly.FromDateTime(resultDate) < _workdayManager.m_workdayStart)
+            if (TimeOnly.FromDateTime(resultDate) < _workdayManager.GetWorkdayStart())
             {
-                resultDate = resultDate.SetTimeOnly(_workdayManager.m_workdayStart);
+                resultDate = resultDate.SetTimeOnly(_workdayManager.GetWorkdayStart());
             }
 
             // disregard time after workday end
-            if (TimeOnly.FromDateTime(resultDate) > _workdayManager.m_workdayEnd)
+            if (TimeOnly.FromDateTime(resultDate) > _workdayManager.GetWorkdayEnd())
             {
-                resultDate = resultDate.SetTimeOnly(_workdayManager.m_workdayEnd);
+                resultDate = resultDate.SetTimeOnly(_workdayManager.GetWorkdayEnd());
             }
 
             // add the seconds passed into the workin day to the working days to be added and set time to start of day
@@ -31,7 +31,7 @@ namespace DateTimeWorkdayExtensions
             // days to be added is greater than one
             daysToAdd += ((float)_workdayManager.SecondsSinceStart(TimeOnly.FromDateTime(resultDate)))
                 / ((float)_workdayManager.WorkdayLengthInSeconds());
-            resultDate = resultDate.SetTimeOnly(_workdayManager.m_workdayStart);
+            resultDate = resultDate.SetTimeOnly(_workdayManager.GetWorkdayStart());
 
             while (daysToAdd >= 1)
             {
