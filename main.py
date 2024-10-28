@@ -15,11 +15,13 @@ def get_days_in_month(year: int, month: int) -> int:
 
 
 def get_week_day_as_int(year: int, month: int, day: int) -> int:
-    total_modifier: int = 5         # because 1st of January 0000 was a Saturday
-    total_modifier += 365 * year    # 365 days passes for each year
+    "Return the week day of any date from 1st of Janauary 0000 and onwards, where Monday is 0 and Sunday is 6"""
+    assert year >= 0, "this has not been tested for negative years"
 
-    for y in range(year):
-        total_modifier += int(is_leap_year(y))
+    total_modifier: int = 5             # because 1st of January 0000 was a Saturday
+    total_modifier += int((365 + 1/4 - 1/100 + 1/400) * year)   # this is the exact number of days in a year
+    if (year > 0):                      # 0000 was a leap year, but multiplaying the faction above by 0 won't reflect that
+        total_modifier += 1
 
     for m in range(1, month):
         total_modifier += get_days_in_month(year, m)
@@ -44,6 +46,7 @@ if __name__ == "__main__":
     
     # test week day at any date
     assert get_week_day_as_int(0000, 1, 1) == 5, "1st of January 0000 is a Saturday"
+    assert get_week_day_as_int(1, 1, 1) == 0, "1st of January 0000 is a Saturday"
     assert get_week_day_as_int(2024, 1, 1) == 0, "1st of Janaury 2024 is a Monday"
     assert get_week_day_as_int(2024, 1, 2) == 1, "2nd of Janaury 2024 is a Tuesday"
     assert get_week_day_as_int(2024, 1, 31) == 2, "31st of Janaury 2024 is a Wednesday"
