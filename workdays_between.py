@@ -5,10 +5,16 @@ class WorkdayManager:
     workday_start: time = time(hour=8)
     workday_end: time = time(hour=16)
 
-    additional_holidays = [
-        datetime(1, 5, 17),     # recurring 17th of May
-        datetime(2004, 5, 27),  # non-recurring 27th of May 2024
-    ]
+    additional_holidays = []
+
+    def add_holiday(self, year, month, day):
+        assert year != 0, "year 0 can not be represented in python DateTime"
+        assert year != 1, "year 1 is used to indicate recurring holidays, if this is your intention, use -1 to make it"
+        "clear"
+        if year == -1:
+            year = 1
+
+        self.additional_holidays.append(datetime(year=year, month=month, day=day))
 
     def workday_length_seconds(self):
         return self.seconds_since_start(self.workday_end)
@@ -73,55 +79,57 @@ def add_working_days(start_date: datetime, working_days: float, workday_manager)
 
 if __name__ == "__main__":
     workday_manager: WorkdayManager = WorkdayManager()
+    workday_manager.add_holiday(year=-1, month=5, day=17)
+    workday_manager.add_holiday(year=2004, month=5, day=27)
 
     # EASE OF DEVELOPMENT CASES
     # test first base case from task, with whole work days
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=19, minute=3),
         working_days=44,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=7, day=27, hour=8)
 
     # test second base case from task, with whole days, at beginning of work day
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=8, minute=0),
         working_days=-1,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=21, hour=8, minute=0)     # loops through a weekend
 
     # test second base case from task, with whole days, at mid of work day
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=12, minute=0),
         working_days=-1,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=21, hour=12, minute=0)     # loops through a weekend
 
     # test second base case from task, with whole days, at any working time
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=13, minute=12),
         working_days=-1,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=21, hour=13, minute=12)     # loops through a weekend
 
     # test second base case from task, with float days within working hours
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=16, minute=0),
         working_days=-1.125,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=21, hour=15, minute=0)     # loops through a weekend
 
     # test second base case from task, with float days from after working hours into same day working hours
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=17, minute=0),
         working_days=-1.125,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=21, hour=15, minute=0)     # loops through a weekend
 
     # unspecified, but I consider the day to HAVE ended at 16:00, which means one working day before is same day 08:00
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=16, minute=0),
         working_days=-1,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=24, hour=8, minute=0)     # loops through a weekend
 
 
@@ -130,19 +138,19 @@ if __name__ == "__main__":
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=19, minute=3),
         working_days=44.723656,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=7, day=27, hour=13, minute=47)
 
     # test second base case from task is wrong
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=18, minute=3),
         working_days=-6.7470217,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) != datetime(year=2004, month=5, day=13, hour=10, minute=2)
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=18, minute=3),
         working_days=-6.7470217,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=5, day=13, hour=10, minute=1)
     
     seconds_to_subtract: float = 0.7470217 * 8 * 3600
@@ -157,12 +165,12 @@ if __name__ == "__main__":
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=8, minute=3),
         working_days=12.782709,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=6, day=10, hour=14, minute=18)
 
     # test fourth base case from task
     assert add_working_days(
         start_date=datetime(year=2004, month=5, day=24, hour=7, minute=3),
         working_days=8.276628,
-        workday_manager=WorkdayManager()
+        workday_manager=workday_manager
     ) == datetime(year=2004, month=6, day=4, hour=10, minute=12)
