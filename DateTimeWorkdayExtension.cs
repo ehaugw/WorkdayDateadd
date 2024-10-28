@@ -8,7 +8,7 @@ namespace DateTimeWorkdayExtensions
             return new DateTime(_date.Year, _date.Month, _date.Day, _time.Hour, _time.Minute, _time.Second);
         }
 
-        public static void AddWorkingDays(this DateTime _date, IWorkdayManager _workdayManager, float _workingDays)
+        public static DateTime AddWorkingDays(this DateTime _date, IWorkdayManager _workdayManager, float _workingDays)
         {
             // assert start_date.microsecond == 0, "task does not require microsecond accuracy"
             // assert working_days != 0, "unspecified behaviour"
@@ -63,6 +63,8 @@ namespace DateTimeWorkdayExtensions
                 resultDate = resultDate.AddSeconds(_workdayManager.WorkdayLengthInSeconds() * daysToAdd);
             }
             resultDate = resultDate.SetTimeOnly(new TimeOnly(resultDate.Hour, resultDate.Minute, 0));
+
+            return resultDate;
         }
     }
 }
