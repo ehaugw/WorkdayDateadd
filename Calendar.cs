@@ -2,11 +2,13 @@ using DateTimeExtensions;
 
 public class Calendar
 {
-    IWorkdayManager m_workdayManager;
+    IWorkdays m_workdays;
+    IHolidays m_holidays;
 
-    public Calendar(IWorkdayManager _workdayManager)
+    public Calendar(IWorkdays _workdays, IHolidays _holidays)
     {
-        m_workdayManager = _workdayManager;
+        m_workdays = _workdays;
+        m_holidays = _holidays;
     }
 
     public DateTime AddWorkingDays(DateTime _date, float _workingDays)
@@ -17,30 +19,30 @@ public class Calendar
 
         // disregard time before workday start
         DateTime resultDate = _date;
-        if (TimeOnly.FromDateTime(resultDate) < m_workdayManager.GetWorkdayStart())
+        if (TimeOnly.FromDateTime(resultDate) < m_workdays.GetWorkdayStart())
         {
-            resultDate = resultDate.SetTimeOnly(m_workdayManager.GetWorkdayStart());
+            resultDate = resultDate.SetTimeOnly(m_workdays.GetWorkdayStart());
         }
 
         // disregard time after workday end
-        if (TimeOnly.FromDateTime(resultDate) > m_workdayManager.GetWorkdayEnd())
+        if (TimeOnly.FromDateTime(resultDate) > m_workdays.GetWorkdayEnd())
         {
-            resultDate = resultDate.SetTimeOnly(m_workdayManager.GetWorkdayEnd());
+            resultDate = resultDate.SetTimeOnly(m_workdays.GetWorkdayEnd());
         }
 
         // add the seconds passed into the workin day to the working days to be added and set time to start of day
         // this is required if the fraction of the initially passed working day plus the fraction part of working
         // days to be added is greater than one
-        daysToAdd += ((float)m_workdayManager.SecondsSinceStart(TimeOnly.FromDateTime(resultDate)))
-            / ((float)m_workdayManager.WorkdayLengthInSeconds());
-        resultDate = resultDate.SetTimeOnly(m_workdayManager.GetWorkdayStart());
+        daysToAdd += ((float)m_workdays.SecondsSinceStart(TimeOnly.FromDateTime(resultDate)))
+            / ((float)m_workdays.WorkdayLengthInSeconds());
+        resultDate = resultDate.SetTimeOnly(m_workdays.GetWorkdayStart());
 
         // while there are days to add, add them, and only subtract them from daysToAdd if the new date is not a
         // holiday
         while (daysToAdd >= 1)
         {
             resultDate = resultDate.AddDays(1);
-            if (!m_workdayManager.IsHoliday(resultDate))
+            if (!m_holidays.IsHoliday(resultDate))
             {
                 daysToAdd -= 1;
             }
@@ -51,7 +53,7 @@ public class Calendar
         while (daysToAdd < 0)
         {
             resultDate = resultDate.AddDays(-1);
-            if (!m_workdayManager.IsHoliday(resultDate))
+            if (!m_holidays.IsHoliday(resultDate))
             {
                 daysToAdd += 1;
             }
@@ -61,7 +63,7 @@ public class Calendar
         // at working day start
         if (daysToAdd > 0)
         {
-            resultDate = resultDate.AddSeconds(m_workdayManager.WorkdayLengthInSeconds() * daysToAdd);
+            resultDate = resultDate.AddSeconds(m_workdays.WorkdayLengthInSeconds() * daysToAdd);
         }
         resultDate = resultDate.SetTimeOnly(new TimeOnly(resultDate.Hour, resultDate.Minute, 0));
 

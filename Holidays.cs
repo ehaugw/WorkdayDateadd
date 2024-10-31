@@ -1,41 +1,17 @@
 using System;
 
-public class WorkdayManager : IWorkdayManager {
-    private TimeOnly m_workdayStart;
-    private TimeOnly m_workdayEnd;
+public class Holidays : IHolidays {
     private List<DateOnly> m_additionalHolidays;
 
-    public WorkdayManager(TimeOnly _workdayStart, TimeOnly _workdayEnd)
+    public Holidays()
     {
         m_additionalHolidays = new List<DateOnly>{};
-        m_workdayStart = _workdayStart;
-        m_workdayEnd = _workdayEnd;
-    }
-
-    public TimeOnly GetWorkdayStart()
-    {
-        return m_workdayStart;
-    }
-
-    public TimeOnly GetWorkdayEnd()
-    {
-        return m_workdayEnd;
     }
 
     public void AddHoliday(DateOnly _holiday)
     {
         // warning about year 1
         m_additionalHolidays.Add(_holiday);
-    }
-
-    public int SecondsSinceStart(TimeOnly _time)
-    {
-        return (_time.Hour - m_workdayStart.Hour) * 3600 + (_time.Minute - m_workdayStart.Minute) * 60;
-    }
-
-    public int WorkdayLengthInSeconds()
-    {
-        return SecondsSinceStart(m_workdayEnd);
     }
 
     public bool IsHoliday(DateTime _date)
